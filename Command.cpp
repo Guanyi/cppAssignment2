@@ -25,4 +25,6 @@ void TranslateCommand::unexecute() {
     delta_.reflectX();
     delta_.reflectY();
     shape_->translate( delta_ );
+    delta_.reflectX();
+    delta_.reflectY();
 }

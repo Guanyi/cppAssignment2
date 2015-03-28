@@ -12,8 +12,8 @@ public:
 
 class TranslateCommand: public Command {
 public:
-    explicit TranslateCommand(std::shared_ptr<Shape> s = nullptr, const Point& delta = Point())
-        : shape_(s), delta_(delta) {}
+    explicit TranslateCommand( std::shared_ptr<Shape> s = nullptr, const Point & delta = Point() )
+        : shape_( s ), delta_( delta ) {}
   
     virtual void execute() override;
     virtual void unexecute() override;
@@ -25,7 +25,7 @@ private:
 
 class XReflectCommand: public Command {
 public:
-    explicit XReflectCommand(std::shared_ptr<Shape> s = nullptr): shape_(s) {}
+    explicit XReflectCommand( std::shared_ptr<Shape> s = nullptr ): shape_(s) {}
     virtual void execute() override;
     virtual void unexecute() override;
 
@@ -35,7 +35,7 @@ private:
 
 class YReflectCommand: public Command {
 public:
-    explicit YReflectCommand(std::shared_ptr<Shape> s = nullptr): shape_(s) {}
+    explicit YReflectCommand( std::shared_ptr<Shape> s = nullptr ): shape_(s) {}
     virtual void execute() override;
     virtual void unexecute() override;
 

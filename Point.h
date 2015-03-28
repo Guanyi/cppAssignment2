@@ -20,7 +20,7 @@ private:
 };
 
 // reads input points of the form (x, y)
-inline std::istream & operator>>(std::istream& is, Point& pt) {
+inline std::istream & operator>>(std::istream & is, Point & pt) {
     char  c1, c2, c3;
     int   x, y;
 

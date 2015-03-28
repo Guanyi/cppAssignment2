@@ -1,7 +1,7 @@
 #include "Triangle.h"
 using namespace std;
 
-Triangle::Triangle( istream& is ) {
+Triangle::Triangle( istream & is ) {
     is >> v1_ >> v2_ >> v3_; 
     if ( !is )
       throw "Triangle::Triangle(const std::string&)";

@@ -2,23 +2,87 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <fstream>
+#include <sstream>
 #include "ShapeFactory.h"
 #include "Shape.h"
 #include "Command.h"
+#include "DrawApp.h"
+
 using namespace std;
 
-int main() {
-    vector<std::shared_ptr<Shape>>  shapeList;
-    shared_ptr<Shape>               s;
-    vector<Command*>                commandList;
-    ShapeFactory                    sf( cin );
+void trimLeadingSpace( string & );
 
+int main( int argc, char* argv[] ) {
+    shared_ptr<Shape> s;
+    DrawApp drawApp;;
+    
+    if( argc != 2 ) {
+        cerr << "Only 1 argument allowed.";
+        return 1;
+	}
+
+    ifstream reader;
+    reader.open( argv[1] );
+    if( !reader.is_open() ) {
+        cerr << "Cannot open input file.";
+        return 1;
+    }
+    
+    ShapeFactory sf( reader );
     while ( ( s = sf.create() ) )
-        shapeList.push_back( s );
-        
-        Command *c = new XReflectCommand(shapeList[1]);
-        c->execute();
-   
-    for ( vector<std::shared_ptr<Shape>>::size_type i = 0, sz = shapeList.size(); i < sz; i++ )
-        shapeList[i]->draw();
+        drawApp.addShape(s);
+    drawApp.showShapeList();
+
+    string input;
+    string commandType;
+    size_t shapeIndex;
+    cout << "> ";
+    while( getline( cin, input ) ) {
+        if (input == "\n")
+            continue;
+        trimLeadingSpace( input );
+        istringstream iss( input );
+        Point point;
+        if ( iss >> commandType ) {
+            if ( commandType == "u" )
+                drawApp.undo();
+            if ( commandType == "r" )
+                drawApp.redo();
+            if (commandType == "x" && iss >> shapeIndex && shapeIndex <= drawApp.shapeSize() ) {
+                shared_ptr<Command> c ( new XReflectCommand( drawApp.getShape( shapeIndex-1 ) ) );
+                c->execute();
+                drawApp.addToHistory( c );
+                drawApp.showShapeList();
+            }
+            if ( commandType == "y" && iss >> shapeIndex && shapeIndex <= drawApp.shapeSize() ) {
+                shared_ptr<Command> c ( new YReflectCommand( drawApp.getShape( shapeIndex-1 ) ) );
+                c->execute();
+                drawApp.addToHistory( c );
+                drawApp.showShapeList();
+            }
+            if ( commandType == "t" && iss >> shapeIndex && shapeIndex <= drawApp.shapeSize() && iss >> point ) {
+                shared_ptr<Command> c ( new TranslateCommand( drawApp.getShape( shapeIndex-1 ), point ) );
+                c->execute();
+                drawApp.addToHistory( c );
+                drawApp.showShapeList();
+            }
+        }
+        cout << "> ";
+    }
 }
+
+void trimLeadingSpace( string & command ) {
+    int length = command.size();
+    int i;
+    for( i = 0; i < length; i++) {
+        if(command[i] != ' ')
+            break;;
+    }
+    command = command.substr(i, length);
+    return;
+}
+
+
+
+
